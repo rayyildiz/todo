@@ -1,24 +1,13 @@
 # Go & React Template
 
-![ci](https://github.com/rayyildiz/go-react-template/workflows/ci/badge.svg)
+![ci](https://github.com/rayyildiz/todo/workflows/ci/badge.svg)
 
-
-Simple template for creating [go](https://golang.org) & [react js](https://reactjs.org/) project. 
-
-```bash
-git clone https://github.com/rayyildiz/go-react-template.git my-awesome-app
-cd my-awesome-app
-make
-```
 
 Backend: 
 ---
 
 - [PostreSQL](https://github.com/lib/pq)
 - [GoCloud](https://gocloud.dev/) 
-- [Zap Logger](https://github.com/uber-go/zap) with [Sentry support](https://github.com/getsentry/sentry-go)
-- [Echo](https://echo.labstack.com/) for routing.
-- [Google Cloud Build](https://cloud.google.com/cloud-build)
 - [Github Action](https://github.com/features/actions)
 
 Frontend: 
@@ -33,9 +22,10 @@ Frontend:
 
 ## Configure
 
-Run `make clean` to remove `.git` folder and create an empty `.env` file. 
 
-```
+
+
+```dotenv
 DEBUG=true
 POSTGRES_CONNECTION=postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
 ```
@@ -48,4 +38,3 @@ Useful links:
 
 - <https://cloud.google.com/run/docs/quickstarts/build-and-deploy> 
 - <https://medium.com/google-cloud/google-cloud-run-for-go-ec09ddbba111> 
-- <https://github.com/ahmetb/cloud-run-faq>

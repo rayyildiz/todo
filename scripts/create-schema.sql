@@ -1,11 +1,7 @@
-CREATE TABLE IF NOT EXISTS users
+CREATE TABLE IF NOT EXISTS todos
 (
-    email         text primary key,
-    password      text not null,
-    full_name     text,
-    profile_photo text,
-    created_at    timestamp default now(),
-    updated_at    timestamp default now(),
-    verified      boolean   default false,
-    deleted_at    timestamp
+    id         uuid primary key,
+    content    text not null,
+    completed  boolean   default false,
+    created_at timestamp default now()
 );

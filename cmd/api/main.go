@@ -1,13 +1,16 @@
 package main
 
 import (
-	"github.com/getsentry/sentry-go"
+	"context"
+	"database/sql"
+	"errors"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 	"github.com/joho/godotenv"
-	"go.rayyildiz.dev/app/internal/infra"
-	"go.rayyildiz.dev/app/pkg/auth"
-	"go.uber.org/zap"
+	"gocloud.dev/docstore"
+	"log"
+	"net/http"
 	"os"
-	"time"
 )
 
 func init() {
@@ -15,23 +18,41 @@ func init() {
 }
 
 func main() {
-	log := infra.NewLogger()
-	defer sentry.Flush(time.Second * 5)
-
-	e := infra.NewHttpRouter(log)
-
-	api := e.Group("/api")
-
-	auth.RegisterHandler(api.Group("/auth"), log)
-	// register other handlers
+	r := chi.NewRouter()
+	r.Use(middleware.RequestID, middleware.Logger, middleware.Recoverer)
 
 	port := os.Getenv("PORT")
-	if port == "" {
+	if len(port) < 1 {
 		port = "4000"
 	}
+	if err := http.ListenAndServe(":"+port, r); err != nil {
+		log.Fatalf("could not start server at :%s, %v", port, err)
+	}
+}
 
-	infra.InitTrace(log, e)
+func newDocStore(collection string) (*docstore.Collection, error) {
+	if collection == "" {
+		return nil, errors.New("$DOCSTORE_COLLECTION can't be nil")
+	}
 
-	log.Info("server is starting", zap.String("port", port))
-	e.Logger.Fatal(e.Start(":" + port))
+	return docstore.OpenCollection(context.Background(), collection)
+}
+
+func newDatabase(connStr string) (*sql.DB, error) {
+	if connStr == "" {
+		return nil, errors.New("please provide a db connection string")
+	}
+
+	// postgres://postgres:123456@localhost/postgres?sslmode=disable
+
+	db, err := sql.Open("postgres", connStr)
+	if err != nil {
+		return nil, err
+	}
+
+	db.SetMaxIdleConns(10)
+	db.SetMaxOpenConns(4)
+
+	err = db.Ping()
+	return db, err
 }

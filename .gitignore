@@ -1,5 +1,5 @@
 .idea/
 *.iml
 tmp/
-.env
+web/app/.env.sample
 coverage.txt
