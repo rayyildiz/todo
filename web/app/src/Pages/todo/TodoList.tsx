@@ -4,7 +4,6 @@ import {TodoList} from "./__generated__/TodoList";
 import {Box, Button, Checkbox, CircularProgress, FormControl, FormControlLabel, FormGroup} from "@material-ui/core";
 import {Toggle, ToggleVariables} from "./__generated__/Toggle";
 import {NewTodoPage} from "./NewTodo";
-import {stat} from "fs";
 
 
 const TODO_LIST_QUERY = gql`
@@ -69,6 +68,8 @@ export const TodoListPage: FC<TodoPageProps> = (props) => {
           <Button variant="contained" color="primary" onClick={() => setOpen(true)}>
             Add Todo
           </Button>
+
+          <br/><br/><hr/>
           <NewTodoPage open={open} onClose={handleCloseDialog}/>
 
           {data?.todos.map(todo => (

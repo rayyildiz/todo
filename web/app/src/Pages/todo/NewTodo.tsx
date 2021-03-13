@@ -31,6 +31,7 @@ export const NewTodoPage: FC<TodoPageProps> = (props) => {
     })
 
     console.log(d)
+    setContent("");
     props.onClose(true);
   }
 

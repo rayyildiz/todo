@@ -28,9 +28,6 @@ func main() {
 
 	repo := newRepository()
 	todoSvc := service.NewTodoService(repo)
-	todoSvc.NewTodo(context.Background(), "hello")
-	todoSvc.NewTodo(context.Background(), "hello")
-	todoSvc.NewTodo(context.Background(), "hello")
 
 	rootResolver := graphql.NewGraphqlResolver(todoSvc)
 	graphqlServer := handler.NewDefaultServer(graphql.NewExecutableSchema(graphql.Config{Resolvers: rootResolver}))
