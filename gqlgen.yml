@@ -1,0 +1,14 @@
+schema:
+  - schema.graphql
+
+exec:
+  filename: pkg/adapter/handler/graphql/gen_interfaces.go
+  package: graphql
+
+federation:
+  filename: pkg/adapter/handler/graphql/gen_federation.go
+  package: graphql
+
+model:
+  filename: pkg/adapter/handler/graphql/gen_models.go
+  package: graphql
