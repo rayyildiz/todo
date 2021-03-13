@@ -3,3 +3,4 @@
 tmp/
 web/app/.env.sample
 coverage.txt
+.env
