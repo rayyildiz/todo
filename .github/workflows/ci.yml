@@ -1,0 +1,33 @@
+name: ci
+on: [push]
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-go@v1
+        with:
+          go-version: 1.15
+        
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12.x
+        
+      - run: go mod download
+        
+      - run: npm ci
+        working-directory: ./web/app
+
+      - run: go test -cover -coverprofile=coverage.txt -covermode=atomic ./...
+
+      # create a CODECOV_TOKEN secret. see https://github.com/marketplace/actions/codecov
+      #- uses: codecov/codecov-action@v1
+      #  with:
+      #    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+
+      - run: npm run build
+        working-directory: ./web/app
