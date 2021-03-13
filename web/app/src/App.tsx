@@ -5,6 +5,8 @@ import {AppRoutes} from "./App.Routes";
 import {Header} from "./Components/Header";
 import {createMuiTheme} from '@material-ui/core/styles';
 import {deepOrange, red} from "@material-ui/core/colors";
+import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client";
+import {BASE_API} from "./environment";
 
 
 const theme = createMuiTheme({
@@ -29,21 +31,29 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     }));
 
+const client = new ApolloClient({
+  uri: BASE_API,
+  cache: new InMemoryCache(),
+});
+
+
 const App: React.FC = () => {
   const classes = useStyles();
 
   return (
-      <BrowserRouter>
-        <Container component="main" className={classes.main} maxWidth="xl">
-          <CssBaseline/>
-          <ThemeProvider theme={theme}>
-            <Header/>
-            <div className={classes.paper}>
-              <AppRoutes/>
-            </div>
-          </ThemeProvider>
-        </Container>
-      </BrowserRouter>
+      <ApolloProvider client={client}>
+        <BrowserRouter>
+          <Container component="main" className={classes.main} maxWidth="xl">
+            <CssBaseline/>
+            <ThemeProvider theme={theme}>
+              <Header/>
+              <div className={classes.paper}>
+                <AppRoutes/>
+              </div>
+            </ThemeProvider>
+          </Container>
+        </BrowserRouter>
+      </ApolloProvider>
   );
 };
 

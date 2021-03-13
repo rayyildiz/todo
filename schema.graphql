@@ -10,6 +10,6 @@ type Query {
 
 type Mutation {
     new(content:String!):Todo
-    toggle(id:ID!): Boolean!
+    toggle(id:ID!): Todo!
     delete(id:ID!): Boolean!
 }

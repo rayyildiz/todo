@@ -10,12 +10,16 @@ require (
 	github.com/golang/mock v1.5.0
 	github.com/google/uuid v1.2.0
 	github.com/joho/godotenv v1.3.0
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/stretchr/testify v1.7.0
+	github.com/urfave/cli/v2 v2.3.0 // indirect
 	github.com/vektah/gqlparser/v2 v2.1.0
 	go.opencensus.io v0.22.6 // indirect
 	gocloud.dev v0.22.0
+	golang.org/x/mod v0.4.2 // indirect
 	golang.org/x/oauth2 v0.0.0-20210201163806-010130855d6c // indirect
 	golang.org/x/sys v0.0.0-20210309074719-68d13333faf2 // indirect
+	golang.org/x/tools v0.1.0 // indirect
 	google.golang.org/api v0.39.0 // indirect
 	google.golang.org/genproto v0.0.0-20210204154452-deb828366460 // indirect
 )

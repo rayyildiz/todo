@@ -29,13 +29,24 @@ func (m mutationResolver) New(ctx context.Context, content string) (*Todo, error
 	}, nil
 }
 
-func (m mutationResolver) Toggle(ctx context.Context, id string) (bool, error) {
+func (m mutationResolver) Toggle(ctx context.Context, id string) (*Todo, error) {
 	err := m.service.ToggleComplete(ctx, id)
 	if err != nil {
 		log.Printf("backend service, %v", err)
-		return false, errors.New("can't change status")
+		return nil, errors.New("can't change status")
 	}
-	return true, nil
+
+	todo, err := m.service.FindById(ctx, id)
+	if err != nil {
+		log.Printf("backend service, %v", err)
+		return nil, errors.New("can't change status")
+	}
+
+	return &Todo{
+		ID:        todo.ID,
+		Content:   todo.Content,
+		Completed: todo.Completed,
+	}, nil
 }
 
 func (m mutationResolver) Delete(ctx context.Context, id string) (bool, error) {

@@ -25,6 +25,14 @@ func (t todoService) FindAll(ctx context.Context) ([]domain.Todo, error) {
 	return todos, nil
 }
 
+func (t todoService) FindById(ctx context.Context, id string) (*domain.Todo, error) {
+	todo, err := t.repo.FindById(ctx, id)
+	if err != nil {
+		return nil, fmt.Errorf("todo service, %w", err)
+	}
+	return todo, nil
+}
+
 func (t todoService) NewTodo(ctx context.Context, content string) (*domain.Todo, error) {
 	todo, err := t.repo.Store(ctx, content)
 	if err != nil {

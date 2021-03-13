@@ -61,7 +61,7 @@ type ComplexityRoot struct {
 
 type MutationResolver interface {
 	New(ctx context.Context, content string) (*Todo, error)
-	Toggle(ctx context.Context, id string) (bool, error)
+	Toggle(ctx context.Context, id string) (*Todo, error)
 	Delete(ctx context.Context, id string) (bool, error)
 }
 type QueryResolver interface {
@@ -223,7 +223,7 @@ type Query {
 
 type Mutation {
     new(content:String!):Todo
-    toggle(id:ID!): Boolean!
+    toggle(id:ID!): Todo!
     delete(id:ID!): Boolean!
 }
 `, BuiltIn: false},
@@ -418,9 +418,9 @@ func (ec *executionContext) _Mutation_toggle(ctx context.Context, field graphql.
 		}
 		return graphql.Null
 	}
-	res := resTmp.(bool)
+	res := resTmp.(*Todo)
 	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return ec.marshalNTodo2ᚖgoᚗrayyildizᚗdevᚋtodoᚋpkgᚋadapterᚋhandlerᚋgraphqlᚐTodo(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) _Mutation_delete(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
@@ -2178,6 +2178,10 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNTodo2goᚗrayyildizᚗdevᚋtodoᚋpkgᚋadapterᚋhandlerᚋgraphqlᚐTodo(ctx context.Context, sel ast.SelectionSet, v Todo) graphql.Marshaler {
+	return ec._Todo(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNTodo2ᚕᚖgoᚗrayyildizᚗdevᚋtodoᚋpkgᚋadapterᚋhandlerᚋgraphqlᚐTodoᚄ(ctx context.Context, sel ast.SelectionSet, v []*Todo) graphql.Marshaler {

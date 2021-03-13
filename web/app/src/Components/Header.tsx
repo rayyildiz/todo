@@ -2,7 +2,6 @@ import React from "react";
 import {AppBar, Button, createStyles, IconButton, makeStyles, Theme, Toolbar, Typography} from "@material-ui/core";
 import HomeIcon from '@material-ui/icons/Home';
 import {useHistory} from "react-router-dom";
-import {Search} from "./Search";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -32,15 +31,15 @@ export const Header = () => {
         <AppBar position="static">
           <Toolbar>
             <IconButton edge="start" className={classes.menuButton} color="inherit" aria-label="menu" onClick={() => history.push("/")}>
-              <HomeIcon />
+              <HomeIcon/>
             </IconButton>
-            
+
             <Typography variant="h6" className={classes.title} onClick={() => history.push("/")}>
-              Go React Template
+              TODO App
             </Typography>
 
-            <Search/>
-            <Button color="inherit" onClick={() => history.push("/login")}>Login</Button>
+            <Button color="inherit" onClick={() => history.push("/todo")}>Todo</Button>
+            <Button color="inherit" onClick={() => history.push("/privacy")}>Privacy</Button>
           </Toolbar>
         </AppBar>
       </div>

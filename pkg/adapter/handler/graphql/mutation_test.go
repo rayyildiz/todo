@@ -46,7 +46,7 @@ func TestMutationResolver_Toggle(t *testing.T) {
 
 	b, err := resolver.Toggle(ctx, "1")
 	if assert.NoError(t, err) {
-		assert.True(t, b)
+		assert.Equal(t, "1", b)
 	}
 }
 
