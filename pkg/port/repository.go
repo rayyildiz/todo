@@ -1,3 +1,4 @@
+//go:generate mockgen -package=port -self_package=go.rayyildiz.dev/todo/pkg/port -destination=repository_mock.go . RepositorySaver,RepositoryReader,Repository
 package port
 
 import (

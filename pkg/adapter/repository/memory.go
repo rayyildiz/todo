@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/google/uuid"
 	"go.rayyildiz.dev/todo/pkg/domain"
+	"go.rayyildiz.dev/todo/pkg/port"
 )
 
 type memoryRepository struct {
@@ -20,7 +21,7 @@ func (m *memoryRepository) FindById(ctx context.Context, id string) (*domain.Tod
 		}
 	}
 
-	return nil, ErrRecordNotFound
+	return nil, port.ErrRecordNotFound
 }
 
 func (m *memoryRepository) FindAll(ctx context.Context) ([]domain.Todo, error) {
@@ -46,7 +47,7 @@ func (m *memoryRepository) Toggle(ctx context.Context, id string) (*domain.Todo,
 		}
 	}
 
-	return nil, ErrRecordNotFound
+	return nil, port.ErrRecordNotFound
 }
 
 func (m *memoryRepository) Delete(ctx context.Context, id string) error {
@@ -57,5 +58,5 @@ func (m *memoryRepository) Delete(ctx context.Context, id string) error {
 		}
 	}
 
-	return nil
+	return port.ErrRecordNotFound
 }

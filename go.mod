@@ -6,6 +6,7 @@ require (
 	cloud.google.com/go v0.76.0 // indirect
 	github.com/aws/aws-sdk-go v1.37.4 // indirect
 	github.com/go-chi/chi/v5 v5.0.1
+	github.com/golang/mock v1.5.0 // indirect
 	github.com/google/uuid v1.2.0 // indirect
 	github.com/joho/godotenv v1.3.0
 	github.com/stretchr/testify v1.7.0 // indirect
