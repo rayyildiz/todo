@@ -25,7 +25,17 @@ func (m *memoryRepository) FindById(ctx context.Context, id string) (*domain.Tod
 }
 
 func (m *memoryRepository) FindAll(ctx context.Context) ([]domain.Todo, error) {
-	return m.container, nil
+	userId := port.UserFromContext(ctx)
+
+	var models []domain.Todo
+
+	for _, todo := range m.container {
+		if userId == todo.User {
+			models = append(models, todo)
+		}
+	}
+
+	return models, nil
 }
 
 func (m *memoryRepository) Store(ctx context.Context, content string) (*domain.Todo, error) {
@@ -33,6 +43,7 @@ func (m *memoryRepository) Store(ctx context.Context, content string) (*domain.T
 		ID:        uuid.New().String(),
 		Content:   content,
 		Completed: false,
+		User:      port.UserFromContext(ctx),
 	}
 
 	m.container = append(m.container, model)

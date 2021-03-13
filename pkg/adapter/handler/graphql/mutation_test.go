@@ -41,12 +41,19 @@ func TestMutationResolver_Toggle(t *testing.T) {
 
 	svc := port.NewMockService(ctrl)
 	svc.EXPECT().ToggleComplete(ctx, "1").Return(nil)
+	svc.EXPECT().FindById(ctx, "1").Return(&domain.Todo{
+		ID:        "1",
+		Content:   "test",
+		Completed: false,
+	}, nil)
 
 	resolver := newMutationResolver(svc)
 
 	b, err := resolver.Toggle(ctx, "1")
 	if assert.NoError(t, err) {
-		assert.Equal(t, "1", b)
+		assert.Equal(t, "1", b.ID)
+		assert.Equal(t, "test", b.Content)
+		assert.Equal(t, false, b.Completed)
 	}
 }
 

@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'typeface-roboto';
-import {ENABLE_SW} from "./Constants";
+import {ENABLE_SW} from "./environment";
 import 'whatwg-fetch';
 import 'es6-promise/auto';
 

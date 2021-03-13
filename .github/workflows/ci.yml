@@ -3,19 +3,15 @@ on: [ push ]
 jobs:
 
   build:
-    name: Build
+    name: build
     runs-on: ubuntu-latest
-    steps:
 
+    steps:
       - uses: actions/checkout@v2
 
       - uses: actions/setup-go@v1
         with:
           go-version: 1.16
-
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
 
       - uses: actions/cache@v2
         with:
@@ -24,17 +20,132 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-ci-go-
 
-      - run: go mod download
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
 
-      #      - run: npm ci
-      #        working-directory: ./web/app
+      - run: go mod download
 
       - run: go test -cover -coverprofile=coverage.txt -covermode=atomic ./...
 
-      # create a CODECOV_TOKEN secret. see https://github.com/marketplace/actions/codecov
-      #- uses: codecov/codecov-action@v1
-      #  with:
-      #    token: ${{ secrets.CODECOV_TOKEN }} # not required for public repos
+      - run: go build -a -installsuffix cgo -ldflags "-w -X main.version=$(VERSION)" -o tmp/app main.go
+        working-directory: cmd/server
+        env:
+          GO111MODULE: "on"
+          GOOS: "linux"
+          CGO_ENABLED: "0"
 
-#      - run: npm run build
-#        working-directory: ./web/app
+      - run: docker build -t eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest .
+        working-directory: cmd/server
+
+      - run: gcloud auth configure-docker
+      - run: docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
+
+  deploy-backend:
+    name: deploy-backend
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 10
+    outputs:
+      apiUrl: ${{ steps.apiUrl.outputs.url }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_version: 0.14.8
+          terraform_wrapper: true
+
+      - run: terraform init
+        working-directory: deployments
+
+      - run: terraform plan -no-color
+        working-directory: deployments
+        id: plan
+        continue-on-error: true
+        env:
+          TF_VAR_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
+          TF_VAR_projectId: ${{ secrets.GCP_PROJECT_ID }}
+          TF_VAR_region: ${{ secrets.GCP_REGION }}
+          TF_VAR_name: ${{ secrets.GCP_RUN_APP_NAME }}
+          TF_VAR_ui_domain: ${{ secrets.GCP_UI_BUCKET }}
+
+      - run: echo ${{ steps.plan.outputs.stdout }}
+        continue-on-error: true
+
+      - run: echo ${{ steps.plan.outputs.stderr }}
+        continue-on-error: true
+
+      - run: echo ${{ steps.plan.outputs.exitcode }}
+        continue-on-error: true
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        id: terraform
+        working-directory: deployments
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve
+        env:
+          TF_VAR_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
+          TF_VAR_projectId: ${{ secrets.GCP_PROJECT_ID }}
+          TF_VAR_region: ${{ secrets.GCP_REGION }}
+          TF_VAR_name: ${{ secrets.GCP_RUN_APP_NAME }}
+          TF_VAR_ui_domain: ${{ secrets.GCP_UI_BUCKET }}
+
+      - id: apiUrl
+        run: |
+          URL=$(echo ${{ steps.terraform.outputs.tf_actions_output }})
+          echo $URL
+          echo "::set-output name=url::$(echo $URL)"
+        shell: bash
+
+  deploy-frontend:
+    name: deploy-frontend
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 10
+
+    steps:
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - run: npm ci
+        working-directory: web/app
+
+      - run: npm run build
+        working-directory: web/app
+
+      - run: gsutil -m cp -z html,css,js,json,txt,xml,svg -r ./build/* gs://${{ secrets.GCP_UI_BUCKET }}/
+        working-directory: web/app
+
+  validation:
+    needs:
+    - deploy-backend
+    - deploy-frontend
+    name: validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: echo "success"
+
+      - run: echo ${{needs.deploy.outputs.apiUrl }}

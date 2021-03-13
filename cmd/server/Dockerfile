@@ -3,6 +3,6 @@ FROM rayyildiz/ca-certificates
 ENV PORT="4000"
 EXPOSE 4000
 
-COPY  ./tmp/api .
+ADD  ./tmp/app .
 
-CMD ["/apps/api"]
+CMD ["/apps/app"]

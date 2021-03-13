@@ -104,3 +104,27 @@ func TestTodoService_ToggleComplete(t *testing.T) {
 	require.NoError(t, err1)
 	require.Errorf(t, err2, port.ErrRecordNotFound.Error())
 }
+
+func TestTodoService_FindById(t *testing.T) {
+	ctx := context.Background()
+
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	repo := port.NewMockRepository(ctrl)
+	repo.EXPECT().FindById(ctx, "2").Return(&domain.Todo{
+		ID:        "2",
+		Content:   "1",
+		Completed: false,
+	}, nil)
+
+	svc := NewTodoService(repo)
+
+	todo, err := svc.FindById(ctx, "2")
+	require.NoError(t, err)
+	if assert.NotNil(t, todo) {
+		assert.Equal(t, "2", todo.ID)
+		assert.Equal(t, "1", todo.Content)
+	}
+
+}

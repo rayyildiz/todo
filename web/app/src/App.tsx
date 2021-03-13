@@ -5,8 +5,9 @@ import {AppRoutes} from "./App.Routes";
 import {Header} from "./Components/Header";
 import {createMuiTheme} from '@material-ui/core/styles';
 import {deepOrange, red} from "@material-ui/core/colors";
-import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client";
-import {BASE_API} from "./environment";
+import {ApolloClient, ApolloProvider, createHttpLink, InMemoryCache} from "@apollo/client";
+import {BASE_API, LOCALSTORAGE_AUTH_KEY} from "./environment";
+import {setContext} from "@apollo/client/link/context";
 
 
 const theme = createMuiTheme({
@@ -31,11 +32,30 @@ const useStyles = makeStyles((theme: Theme) =>
       },
     }));
 
-const client = new ApolloClient({
+const httpLink = createHttpLink({
   uri: BASE_API,
-  cache: new InMemoryCache(),
 });
 
+const authLink = setContext((_, {headers}) => {
+  const token = localStorage.getItem(LOCALSTORAGE_AUTH_KEY);
+  return {
+    headers: {
+      ...headers,
+      Authorization: token ? `${token}` : "",
+    }
+  }
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(httpLink),
+  cache: new InMemoryCache()
+});
+/*
+ const token = localStorage.getItem(LOCALSTORAGE_TOKEN);
+  if (token != null) {
+    request.headers.set("Authorization", "Bearer " + token);
+  }
+ */
 
 const App: React.FC = () => {
   const classes = useStyles();

@@ -38,7 +38,6 @@ export const Header = () => {
               TODO App
             </Typography>
 
-            <Button color="inherit" onClick={() => history.push("/todo")}>Todo</Button>
             <Button color="inherit" onClick={() => history.push("/privacy")}>Privacy</Button>
           </Toolbar>
         </AppBar>

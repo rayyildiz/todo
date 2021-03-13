@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/google/uuid"
 	"go.rayyildiz.dev/todo/pkg/domain"
+	"go.rayyildiz.dev/todo/pkg/port"
 	"gocloud.dev/docstore"
 	"io"
 )
@@ -31,6 +32,8 @@ func (r docstoreRepository) FindById(ctx context.Context, id string) (*domain.To
 func (r docstoreRepository) FindAll(ctx context.Context) ([]domain.Todo, error) {
 	var models []domain.Todo
 
+	userId := port.UserFromContext(ctx)
+
 	it := r.collection.Query().Limit(maxLimit).Get(ctx)
 	for {
 		model := domain.Todo{}
@@ -41,7 +44,9 @@ func (r docstoreRepository) FindAll(ctx context.Context) ([]domain.Todo, error) 
 		if err != nil {
 			return nil, fmt.Errorf("while getting all models, %w", err)
 		}
-		models = append(models, model)
+		if model.User == userId {
+			models = append(models, model)
+		}
 	}
 
 	return models, nil
@@ -52,6 +57,7 @@ func (r docstoreRepository) Store(ctx context.Context, content string) (*domain.
 		ID:        uuid.New().String(),
 		Content:   content,
 		Completed: false,
+		User:      port.UserFromContext(ctx),
 	}
 	err := r.collection.Create(ctx, &model)
 	if err != nil {
