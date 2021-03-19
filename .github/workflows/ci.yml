@@ -61,6 +61,7 @@ jobs:
 
       - run: gcloud auth configure-docker
       - run: docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
+      - run: docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:latest
 
   deploy-backend:
     name: deploy-backend
