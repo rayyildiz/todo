@@ -1,10 +1,17 @@
 name: ci
-on: [ push ]
+on:
+  push:
+    branches:
+      - main
+
 jobs:
 
   build:
     name: build
     runs-on: ubuntu-latest
+    env:
+      SHA8: ${GITHUB_SHA::8}
+      VERSION: ${GITHUB_SHA::8}
 
     steps:
       - uses: actions/checkout@v2
@@ -30,15 +37,27 @@ jobs:
 
       - run: go test -cover -coverprofile=coverage.txt -covermode=atomic ./...
 
-      - run: go build -a -installsuffix cgo -ldflags "-w -X main.version=$(VERSION)" -o tmp/app main.go
+      - run: go build -a -installsuffix cgo -ldflags "-w -X main.version=$VERSION" -o tmp/app main.go
         working-directory: cmd/server
         env:
           GO111MODULE: "on"
           GOOS: "linux"
           CGO_ENABLED: "0"
 
+
       - run: docker build -t eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest .
         working-directory: cmd/server
+
+      - run: go build -a -installsuffix cgo -ldflags "-w -X main.version=$VERSION" -o tmp/app main.go
+        working-directory: cmd/clean
+        env:
+          GO111MODULE: "on"
+          GOOS: "linux"
+          CGO_ENABLED: "0"
+
+      - run: docker build -t eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:latest .
+        working-directory: cmd/clean
+
 
       - run: gcloud auth configure-docker
       - run: docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
@@ -72,11 +91,13 @@ jobs:
         id: plan
         continue-on-error: true
         env:
-          TF_VAR_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
+          TF_VAR_backend_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
+          TF_VAR_clean_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:latest
           TF_VAR_projectId: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_region: ${{ secrets.GCP_REGION }}
           TF_VAR_name: ${{ secrets.GCP_RUN_APP_NAME }}
           TF_VAR_ui_domain: ${{ secrets.GCP_UI_BUCKET }}
+          TF_VAR_iam_service_invoker_mail: ${{ secrets.GCP_IAM_INVOKER_MAIL }}
 
       - run: echo ${{ steps.plan.outputs.stdout }}
         continue-on-error: true
@@ -97,11 +118,13 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
         env:
-          TF_VAR_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
+          TF_VAR_backend_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
+          TF_VAR_clean_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:latest
           TF_VAR_projectId: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_region: ${{ secrets.GCP_REGION }}
           TF_VAR_name: ${{ secrets.GCP_RUN_APP_NAME }}
           TF_VAR_ui_domain: ${{ secrets.GCP_UI_BUCKET }}
+          TF_VAR_iam_service_invoker_mail: ${{ secrets.GCP_IAM_INVOKER_MAIL }}
 
       - id: apiUrl
         run: |
@@ -146,6 +169,4 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - run: echo "success"
-
       - run: echo ${{needs.deploy.outputs.apiUrl }}

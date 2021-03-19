@@ -5,7 +5,7 @@ resource "google_cloud_run_service" "backend" {
   template {
     spec {
       containers {
-        image = var.image
+        image = var.backend_image
 
         ports {
           container_port = var.container_port
@@ -29,13 +29,19 @@ resource "google_cloud_run_service" "backend" {
         }
       }
     }
+
+    metadata {
+      annotations = {
+        "autoscaling.knative.dev/maxScale" = "10"
+      }
+    }
   }
+  autogenerate_revision_name = true
 
   traffic {
     percent         = 100
     latest_revision = true
   }
-  autogenerate_revision_name = true
 
   lifecycle {
     ignore_changes = [

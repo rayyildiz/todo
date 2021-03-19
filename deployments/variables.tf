@@ -8,14 +8,22 @@ variable "container_port" {
   default = "4000"
 }
 variable "name" {
-  default = "todo-backend"
+  default = "demoapp"
 }
-variable "image" {
-  default   = "rayyildiz/todo"
+variable "backend_image" {
+  type      = string
+  sensitive = true
+}
+variable "clean_image" {
+  type      = string
+  sensitive = true
+}
+variable "ui_domain" {
+  type      = string
   sensitive = true
 }
 
-variable "ui_domain" {
+variable "iam_service_invoker_mail" {
   type      = string
   sensitive = true
 }

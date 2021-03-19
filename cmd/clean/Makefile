@@ -7,7 +7,7 @@ build:
 	GO111MODULE=on GOOS=linux CGO_ENABLED=0 go build -a -installsuffix cgo -ldflags "-w -X main.version=$(VERSION)" -o tmp/app main.go
 
 docker:
-	docker build -t eu.gcr.io/${PROJECT_ID}/todo:$(TAG) .
+	docker build -t eu.gcr.io/${PROJECT_ID}/clean:$(TAG) .
 
-push:
-	docker push eu.gcr.io/${PROJECT_ID}/todo:$(TAG)
+push: docker
+	docker push eu.gcr.io/${PROJECT_ID}/clean:$(TAG)

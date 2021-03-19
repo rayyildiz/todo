@@ -39,7 +39,7 @@ export const IndexPage: FC<IndexPageProps> = (props) => {
             <Grid item xs={12}>
               <Typography variant="h5" gutterBottom>
                 This is a demo application.
-                The application opens a temporary session, this session will be deleted automatically after 30 minutes.
+                The application opens a temporary session, this to-do lists will be deleted automatically in 2 hours.
                 You can access the source code from <a href="https://go.rayyildiz.dev/todo">this address</a>.
               </Typography>
             </Grid>
