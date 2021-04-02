@@ -1,5 +1,5 @@
 import {Link} from 'react-router-dom';
-import {Box, Heading, Flex, Text, Button} from '@chakra-ui/react';
+import {Box, Heading, Flex, Text} from '@chakra-ui/react';
 import {ColorModeSwitcher} from "./ColorModeSwitcher";
 
 
