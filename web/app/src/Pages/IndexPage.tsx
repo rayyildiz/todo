@@ -1,25 +1,12 @@
 import {FC} from "react";
-import {Button, Container, createStyles, Grid, makeStyles, Theme, Typography} from "@material-ui/core";
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import {Box, Heading, Button} from "@chakra-ui/react"
 import {LOCALSTORAGE_AUTH_KEY} from "../environment";
 import {useHistory} from "react-router-dom";
 import {v4 as uuidv4} from "uuid";
-
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-      form: {
-        width: '100%',
-        marginTop: theme.spacing(12),
-      },
-    }),
-);
-
+import {FaArrowAltCircleRight} from "react-icons/fa";
 
 type IndexPageProps = {}
-
-
 export const IndexPage: FC<IndexPageProps> = (props) => {
-  const classes = useStyles();
   const history = useHistory();
 
   const createSession = () => {
@@ -33,22 +20,13 @@ export const IndexPage: FC<IndexPageProps> = (props) => {
   }
 
   return (
-      <Container maxWidth="md" className={classes.form}>
-        <div>
-          <Grid container spacing={0}>
-            <Grid item xs={12}>
-              <Typography variant="h5" gutterBottom>
-                This is a demo application.
-                The application opens a temporary session, this to-do lists will be deleted automatically in 2 hours.
-                You can access the source code from <a href="https://go.rayyildiz.dev/todo">this address</a>.
-              </Typography>
-            </Grid>
-            <Grid item xs={12}>
-              <Button variant="contained" color="primary" size="large" startIcon={<ExitToAppIcon/>} onClick={createSession}>Open a session</Button>
-            </Grid>
-          </Grid>
-        </div>
-      </Container>
+        <Box w="100%" p={6}>
+          <Heading as="h4" size="md">
+            This is a demo application.
+            The application opens a temporary session, this to-do lists will be deleted automatically in 2 hours.
+            You can access the source code from  <a href="https://go.rayyildiz.dev/todo"><u>this address</u></a>.
+          </Heading>
+          <Button mt={4} size="lg" onClick={createSession} rightIcon={<FaArrowAltCircleRight />}>Open a session</Button>
+        </Box>
   )
-
 };

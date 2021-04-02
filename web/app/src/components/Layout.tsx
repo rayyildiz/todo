@@ -1,0 +1,18 @@
+import {Container, Grid} from '@chakra-ui/react';
+import {FC} from "react";
+import Nav from "./Nav";
+
+type LayoutProps = {}
+
+export const Layout: FC<LayoutProps> = (props) => {
+  return (
+      <>
+        <Grid gap={6} p={2}>
+          <Nav/>
+        </Grid>
+        <Container maxW="container.xl">
+          {props.children}
+        </Container>
+      </>
+  );
+}

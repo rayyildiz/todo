@@ -1,14 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import {ChakraProvider, ColorModeScript, theme} from '@chakra-ui/react';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import 'typeface-roboto';
 import {ENABLE_SW} from "./environment";
-import 'whatwg-fetch';
-import 'es6-promise/auto';
+import './index.css';
 
-ReactDOM.render(<App/>, document.getElementById('root'));
+
+ReactDOM.render(
+    <React.StrictMode>
+      <ColorModeScript/>
+      <ChakraProvider theme={theme}>
+        <App/>
+      </ChakraProvider>
+    </React.StrictMode>,
+    document.getElementById('root')
+);
 
 if (ENABLE_SW) {
   serviceWorker.register();

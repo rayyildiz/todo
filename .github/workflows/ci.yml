@@ -45,7 +45,7 @@ jobs:
           CGO_ENABLED: "0"
 
 
-      - run: docker build -t eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest .
+      - run: docker build -t eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:${{ github.sha }} .
         working-directory: cmd/server
 
       - run: go build -a -installsuffix cgo -ldflags "-w -X main.version=$VERSION" -o tmp/app main.go
@@ -55,13 +55,13 @@ jobs:
           GOOS: "linux"
           CGO_ENABLED: "0"
 
-      - run: docker build -t eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:latest .
+      - run: docker build -t eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:${{ github.sha }} .
         working-directory: cmd/clean
 
 
       - run: gcloud auth configure-docker
-      - run: docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
-      - run: docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:latest
+      - run: docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:${{ github.sha }}
+      - run: docker push eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:${{ github.sha }}
 
   deploy-backend:
     name: deploy-backend
@@ -92,8 +92,8 @@ jobs:
         id: plan
         continue-on-error: true
         env:
-          TF_VAR_backend_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
-          TF_VAR_clean_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:latest
+          TF_VAR_backend_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:${{ github.sha }}
+          TF_VAR_clean_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:${{ github.sha }}
           TF_VAR_projectId: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_region: ${{ secrets.GCP_REGION }}
           TF_VAR_name: ${{ secrets.GCP_RUN_APP_NAME }}
@@ -119,8 +119,8 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
         env:
-          TF_VAR_backend_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:latest
-          TF_VAR_clean_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:latest
+          TF_VAR_backend_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/todo:${{ github.sha }}
+          TF_VAR_clean_image: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}/clean:${{ github.sha }}
           TF_VAR_projectId: ${{ secrets.GCP_PROJECT_ID }}
           TF_VAR_region: ${{ secrets.GCP_REGION }}
           TF_VAR_name: ${{ secrets.GCP_RUN_APP_NAME }}

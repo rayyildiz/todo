@@ -65,7 +65,7 @@ func (m *memoryRepository) Delete(ctx context.Context, id string) error {
 	for i, con := range m.container {
 		if con.ID == id {
 			m.container = append(m.container[:i], m.container[i+1:]...)
-			break
+			return nil
 		}
 	}
 
