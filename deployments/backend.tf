@@ -68,16 +68,3 @@ resource "google_cloud_run_service_iam_policy" "no_auth" {
 
   policy_data = data.google_iam_policy.no_auth.policy_data
 }
-
-resource "google_cloud_run_domain_mapping" "backend" {
-  name = "api-${var.ui_domain}"
-  location =  google_cloud_run_service.backend.location
-
-  metadata {
-    namespace = var.projectId
-  }
-
-  spec {
-    route_name = google_cloud_run_service.backend.name
-  }
-}
