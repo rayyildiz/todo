@@ -5,3 +5,5 @@ web/app/.env.sample
 coverage.txt
 .env
 cas/
+.vscode/
+.metals/

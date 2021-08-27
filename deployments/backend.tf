@@ -31,6 +31,7 @@ resource "google_cloud_run_service" "backend" {
     }
 
     metadata {
+      namespace = var.projectId
       annotations = {
         "autoscaling.knative.dev/maxScale" = "10"
       }
@@ -66,4 +67,17 @@ resource "google_cloud_run_service_iam_policy" "no_auth" {
   service  = google_cloud_run_service.backend.name
 
   policy_data = data.google_iam_policy.no_auth.policy_data
+}
+
+resource "google_cloud_run_domain_mapping" "backend" {
+  name = "api-${var.ui_domain}"
+  location =  google_cloud_run_service.backend.location
+
+  metadata {
+    namespace = var.projectId
+  }
+
+  spec {
+    route_name = google_cloud_run_service.backend.name
+  }
 }

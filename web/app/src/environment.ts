@@ -1,5 +1,5 @@
 const prod = {
-  apiURL: 'https://demoapp-service-itqqmzgueq-ew.a.run.app/api/query',
+  apiURL: 'https://api-todo.rayyildiz.dev/api/query',
   swEnable: false,
 };
 

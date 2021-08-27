@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-go@v1
         with:
-          go-version: 1.16
+          go-version: 1.17
 
       - uses: actions/cache@v2
         with:
@@ -81,7 +81,7 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 0.14.8
+          terraform_version: 1.0.4
           terraform_wrapper: true
 
       - run: terraform init
