@@ -1,13 +1,13 @@
 import {FC} from "react";
 import {Box, Heading, Button} from "@chakra-ui/react"
 import {LOCALSTORAGE_AUTH_KEY} from "../environment";
-import {useHistory} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {v4 as uuidv4} from "uuid";
 import {FaArrowAltCircleRight} from "react-icons/fa";
 
 type IndexPageProps = {}
 export const IndexPage: FC<IndexPageProps> = (props) => {
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const createSession = () => {
 
@@ -16,7 +16,7 @@ export const IndexPage: FC<IndexPageProps> = (props) => {
       uuid = uuidv4();
       localStorage.setItem(LOCALSTORAGE_AUTH_KEY, uuid);
     }
-    history.push("/todo");
+    navigate("/todo");
   }
 
   return (
