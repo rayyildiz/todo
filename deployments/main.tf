@@ -2,9 +2,10 @@ terraform {
   required_providers {
     google = {
       source  = "hashicorp/google"
-      version = "3.81.0"
+      version = "4.65.1"
     }
   }
+
 
   backend "gcs" {
     bucket = "rayyildiz-terraform-state"
